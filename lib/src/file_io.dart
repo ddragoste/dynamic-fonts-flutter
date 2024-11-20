@@ -1,29 +1,48 @@
 import 'dart:typed_data' show ByteData;
 
-bool get isMacOS => false;
-bool get isAndroid => false;
-bool get isTest => false;
+import 'file_io_stub.dart' // Stubbed implementation by default.
+// Concrete implementation if File IO is available.
+    if (dart.library.io) 'file_io_desktop_and_mobile.dart' as file_io;
 
-/// By default, file IO is stubbed out.
-///
-/// If the path provider library is available (on mobile or desktop), then the
-/// implementation in `file_io_desktop_and_mobile.dart` is used.
+bool get isMacOS => file_io.isMacOS;
+bool get isAndroid => file_io.isAndroid;
+bool get isTest => file_io.isTest;
 
-/// Stubbed out version of saveFontToDeviceFileSystem from
-/// `file_io_desktop_and_mobile.dart`.
-Future<void> saveFontToDeviceFileSystem({
+/// Signature of method that can be used to save font to device.
+typedef SaveFontToDeviceFileSystemFn = Future<void> Function({
   required String name,
   required String fileHash,
   required List<int> bytes,
-}) {
-  return Future.value(null);
-}
+});
 
-/// Stubbed out version of loadFontFromDeviceFileSystem from
-/// `file_io_desktop_and_mobile.dart`.
-Future<ByteData?> loadFontFromDeviceFileSystem({
+/// Signature of method that can be used to save font to device.
+typedef LoadFontFromDeviceFileSystemFn = Future<ByteData?> Function({
   required String name,
   required String fileHash,
+});
+
+SaveFontToDeviceFileSystemFn? _saveFontToDeviceFileSystem =
+    file_io.saveFontToDeviceFileSystem;
+
+LoadFontFromDeviceFileSystemFn? _loadFontFromDeviceFileSystem =
+    file_io.loadFontFromDeviceFileSystem;
+
+void initializeIO({
+  SaveFontToDeviceFileSystemFn? saveFn,
+  LoadFontFromDeviceFileSystemFn? loadFn,
 }) {
-  return Future.value(null);
+  _saveFontToDeviceFileSystem = saveFn;
+  _loadFontFromDeviceFileSystem = loadFn;
 }
+
+/// Current definition of save function based on platform.
+/// By default stubbed out but can be assigned to something else.
+/// On mobile & desktop this saves to file system, see: [file_io_desktop_and_mobile.dart]
+SaveFontToDeviceFileSystemFn? get saveFontToDeviceFileSystem =>
+    _saveFontToDeviceFileSystem;
+
+/// Current definition of load function based on platform.
+/// By default stubbed out but can be assigned to something else.
+/// On mobile & desktop this loads from file system, see: [file_io_desktop_and_mobile.dart]
+LoadFontFromDeviceFileSystemFn? get loadFontFromDeviceFileSystem =>
+    _loadFontFromDeviceFileSystem;

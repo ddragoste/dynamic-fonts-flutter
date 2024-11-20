@@ -18,9 +18,7 @@ import 'package:http/http.dart' as http;
 
 import '../dynamic_fonts.dart';
 import 'asset_manifest.dart';
-import 'file_io.dart' // Stubbed implementation by default.
-    // Concrete implementation if File IO is available.
-    if (dart.library.io) 'file_io_desktop_and_mobile.dart' as file_io;
+import 'file_io.dart' as file_io;
 import 'google_fonts_descriptor.dart';
 import 'google_fonts_family_with_variant.dart';
 import 'google_fonts_variant.dart';
@@ -190,7 +188,7 @@ Future<void> loadFontIfNecessary(GoogleFontsDescriptor descriptor,
     }
 
     // Check if this font can be loaded from the device file system.
-    byteData = file_io.loadFontFromDeviceFileSystem(
+    byteData = file_io.loadFontFromDeviceFileSystem?.call(
       name: familyWithVariantString,
       fileHash: fileHash,
     );
@@ -299,7 +297,7 @@ Future<ByteData> _httpFetchFontAndSaveToDevice(
       );
     }
 
-    _unawaited(file_io.saveFontToDeviceFileSystem(
+    _unawaited(file_io.saveFontToDeviceFileSystem?.call(
       name: fontName,
       fileHash: file.expectedFileHash,
       bytes: response.bodyBytes,
@@ -358,4 +356,4 @@ bool _isFileSecure(GoogleFontsFile file, Uint8List bytes) {
       file.expectedFileHash == actualFileHash;
 }
 
-void _unawaited(Future<void> future) {}
+void _unawaited(Future<void>? future) {}
