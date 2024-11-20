@@ -352,8 +352,8 @@ String? _findFamilyWithVariantAssetPath(
 bool _isFileSecure(GoogleFontsFile file, Uint8List bytes) {
   final actualFileLength = bytes.length;
   final actualFileHash = sha256.convert(bytes).toString();
-  return file.expectedLength == actualFileLength &&
-      file.expectedFileHash == actualFileHash;
+
+  return file.isSecure(actualFileHash, actualFileLength);
 }
 
 void _unawaited(Future<void>? future) {}

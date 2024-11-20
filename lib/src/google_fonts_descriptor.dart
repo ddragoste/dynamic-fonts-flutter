@@ -30,4 +30,9 @@ class GoogleFontsFile {
   final int expectedLength;
 
   String get url => 'https://fonts.gstatic.com/s/a/$expectedFileHash.ttf';
+
+  bool isSecure(String actualFileHash, int actualFileLength) {
+    return expectedLength == actualFileLength &&
+        expectedFileHash == actualFileHash;
+  }
 }
